@@ -3,8 +3,22 @@ name = "axum-serde"
 version = "0.1.0"
 description = "Empower your Axum applications with multiple serde-based extractors and responders"
 authors = ["GengTeng <me@gteng.org>"]
-edition = "2021"
 license = "MIT"
+homepage = "https://github.com/gengteng/axum-serde"
+repository = "https://github.com/gengteng/axum-serde"
+documentation = "https://docs.rs/axum-serde"
+keywords = [
+    "axum",
+    "serde",
+    "extractor",
+    "response",
+]
+categories = [
+    "asynchronous",
+    "network-programming",
+    "web-programming",
+]
+edition = "2021"
 
 [package.metadata.docs.rs]
 features = ["full"]

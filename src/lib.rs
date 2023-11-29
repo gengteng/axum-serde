@@ -72,18 +72,18 @@ macro_rules! extractor {
             T: serde::de::DeserializeOwned,
             S: Send + Sync,
         {
-            type Rejection = crate::Rejection<$de_err>;
+            type Rejection = $crate::Rejection<$de_err>;
 
             async fn from_request(
                 req: axum::extract::Request,
                 state: &S,
             ) -> Result<Self, Self::Rejection> {
-                if crate::check_content_type(req.headers(), &$content_type) {
+                if $crate::check_content_type(req.headers(), &$content_type) {
                     let src = bytes::Bytes::from_request(req, state).await?;
-                    let inner = $de(&src).map_err(crate::Rejection::InvalidContentFormat)?;
+                    let inner = $de(&src).map_err($crate::Rejection::InvalidContentFormat)?;
                     Ok($ext(inner))
                 } else {
-                    Err(crate::Rejection::UnsupportedMediaType($content_type))
+                    Err($crate::Rejection::UnsupportedMediaType($content_type))
                 }
             }
         }
