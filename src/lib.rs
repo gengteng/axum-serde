@@ -6,6 +6,8 @@ pub mod msgpack;
 pub mod rejection;
 #[cfg(feature = "toml")]
 pub mod toml;
+#[cfg(feature = "xml")]
+pub mod xml;
 #[cfg(feature = "yaml")]
 pub mod yaml;
 
@@ -17,6 +19,8 @@ pub use msgpack::*;
 pub use rejection::*;
 #[cfg(feature = "toml")]
 pub use toml::*;
+#[cfg(feature = "xml")]
+pub use xml::*;
 #[cfg(feature = "yaml")]
 pub use yaml::*;
 
@@ -27,13 +31,29 @@ pub use yaml::*;
 macro_rules! extractor {
     (
         $ext:tt,
-        $content_type:expr,
+        $type_:tt,
+        $subtype:tt,
         $de:ident,
         $de_err:ident,
         $ser:ident
     ) => {
         #[doc = stringify!($ext)]
         #[doc = " Extractor / Response."]
+        #[doc = ""]
+        #[doc = "When used as an extractor, it can deserialize request bodies into some type that"]
+        #[doc = "implements [`serde::Deserialize`]. The request will be rejected (and a [`crate::Rejection`] will"]
+        #[doc = "be returned) if:"]
+        #[doc = "- The request doesn't have a `Content-Type:"]
+        #[doc = concat!(stringify!($type_), "/", stringify!($subtype))]
+        #[doc = "` (or similar) header."]
+        #[doc = "- The body doesn't contain syntactically valid "]
+        #[doc = stringify!($ext)]
+        #[doc = "."]
+        #[doc = "- The body contains syntactically valid "]
+        #[doc = stringify!($ext)]
+        #[doc = " but it couldn't be deserialized into the target"]
+        #[doc = "type."]
+        #[doc = "- Buffering the request body fails."]
         #[derive(Debug, Clone, Copy, Default)]
         pub struct $ext<T>(pub T);
 
@@ -64,6 +84,11 @@ macro_rules! extractor {
             pub fn into_inner(self) -> T {
                 self.0
             }
+
+            #[doc = "Content type of "]
+            #[doc = stringify!($ext)]
+            #[doc = " format."]
+            pub const CONTENT_TYPE: &'static str = concat!(stringify!($type_), "/", stringify!($subtype));
         }
 
         #[async_trait::async_trait]
@@ -78,12 +103,12 @@ macro_rules! extractor {
                 req: axum::extract::Request,
                 state: &S,
             ) -> Result<Self, Self::Rejection> {
-                if $crate::check_content_type(req.headers(), &$content_type) {
+                if $crate::check_content_type(req.headers(), Self::CONTENT_TYPE) {
                     let src = bytes::Bytes::from_request(req, state).await?;
                     let inner = $de(&src).map_err($crate::Rejection::InvalidContentFormat)?;
                     Ok($ext(inner))
                 } else {
-                    Err($crate::Rejection::UnsupportedMediaType($content_type))
+                    Err($crate::Rejection::UnsupportedMediaType(Self::CONTENT_TYPE))
                 }
             }
         }
@@ -97,7 +122,7 @@ macro_rules! extractor {
                     Ok(vec) => (
                         [(
                             axum::http::header::CONTENT_TYPE,
-                            axum::http::HeaderValue::from_static($content_type),
+                            axum::http::HeaderValue::from_static(Self::CONTENT_TYPE),
                         )],
                         vec,
                     )

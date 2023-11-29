@@ -54,6 +54,7 @@ async fn main() -> anyhow::Result<()> {
 | `Yaml<T>`                      | yaml    | [serde_yaml](https://crates.io/crates/serde_yaml) v0.9.27 |
 | `MsgPack<T>` / `MsgPackRaw<T>` | msgpack | [rmp-serde](https://crates.io/crates/rmp-serde) v1.1.2    |
 | `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml) v0.8.8              |
+| `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.31.0   |
 
 ## 📜 License
 
