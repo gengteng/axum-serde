@@ -6,7 +6,7 @@ use serde_yaml::from_slice;
 use serde_yaml::to_writer;
 use serde_yaml::Error;
 
-extractor!(Yaml, application, yaml, from_slice, Error, to_vec);
+extractor!(YAML, Yaml, application, yaml, from_slice, Error, to_vec);
 
 fn to_vec<T: Serialize>(value: &T) -> Result<Vec<u8>, Error> {
     let mut buffer = Vec::with_capacity(128);

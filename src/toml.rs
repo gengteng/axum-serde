@@ -7,7 +7,7 @@ use toml_::de::Error;
 use toml_::from_str;
 use toml_::to_string;
 
-extractor!(Toml, application, toml, from_slice, Error, to_vec);
+extractor!(TOML, Toml, application, toml, from_slice, Error, to_vec);
 
 fn from_slice<T: DeserializeOwned>(s: &[u8]) -> Result<T, Error> {
     let src = std::str::from_utf8(s).map_err(Error::custom)?;

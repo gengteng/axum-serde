@@ -15,21 +15,32 @@ use axum::http::{header, HeaderMap};
 use mime::Mime;
 
 #[cfg(feature = "msgpack")]
-pub use msgpack::*;
-pub use rejection::*;
+pub use msgpack::{MsgPack, MsgPackRaw};
+pub use rejection::Rejection;
 #[cfg(feature = "toml")]
-pub use toml::*;
+pub use toml::Toml;
 #[cfg(feature = "xml")]
-pub use xml::*;
+pub use xml::Xml;
 #[cfg(feature = "yaml")]
-pub use yaml::*;
+pub use yaml::Yaml;
 
 /// This macro is designed to create an extractor type.
 /// It uses `serde` for extracting data from requests and serializing data into response body.
 ///
+/// # Arguments
+///
+/// * `$name` - The name of the HTTP extractor/response.
+/// * `$ext` - The actual type name of the HTTP extractor/response.
+/// * `$type_` - The main type of the Content-Type that this extractor supports.
+/// * `$subtype` - The subtype of the Content-Type that this extractor supports.
+/// * `$de` - A function identifier for deserializing data from the HTTP request body.
+/// * `$de_err` - The type of error that can occur when deserializing from the request body.
+/// * `$ser` - A function identifier for serializing the HTTP response body to bytes.
+///
 #[macro_export]
 macro_rules! extractor {
     (
+        $name:tt,
         $ext:tt,
         $type_:tt,
         $subtype:tt,
@@ -37,7 +48,7 @@ macro_rules! extractor {
         $de_err:ident,
         $ser:ident
     ) => {
-        #[doc = stringify!($ext)]
+        #[doc = stringify!($name)]
         #[doc = " Extractor / Response."]
         #[doc = ""]
         #[doc = "When used as an extractor, it can deserialize request bodies into some type that"]
@@ -47,15 +58,20 @@ macro_rules! extractor {
         #[doc = concat!(stringify!($type_), "/", stringify!($subtype))]
         #[doc = "` (or similar) header."]
         #[doc = "- The body doesn't contain syntactically valid "]
-        #[doc = stringify!($ext)]
+        #[doc = stringify!($name)]
         #[doc = "."]
         #[doc = "- The body contains syntactically valid "]
-        #[doc = stringify!($ext)]
+        #[doc = stringify!($name)]
         #[doc = " but it couldn't be deserialized into the target"]
         #[doc = "type."]
         #[doc = "- Buffering the request body fails."]
         #[doc = ""]
-        #[doc = "⚠️ Since parsing JSON requires consuming the request body, the Json extractor must be last if there are multiple extractors in a handler."]
+        #[doc = "⚠️ Since parsing "]
+        #[doc = stringify!($name)]
+        #[doc = " requires consuming the request body, the "]
+        #[doc = stringify!($ext)]
+        #[doc = " extractor must be last if there are multiple extractors in a handler."]
+        #[doc = ""]
         #[doc = "See [`crate::Rejection`] for more details."]
         #[doc = "# Extractor example"]
         #[doc = " ```rust,ignore"]
