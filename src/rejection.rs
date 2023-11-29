@@ -6,14 +6,25 @@ use axum_core::extract::rejection::BytesRejection;
 use axum_core::response::{IntoResponse, Response};
 use std::fmt::Display;
 
-/// The `Rejection` enum represents the different types of rejections that can occur when handling
-/// requests with unsupported media types or invalid content formats.
+/// `Rejection` is an enumeration which describes different types of rejection
+/// responses from handling HTTP requests. It is designed to provide informative,
+/// readable error responses which can be converted into HTTP responses.
 ///
-/// # Enums
+/// This enumeration includes the following variants:
 ///
-/// - `UnsupportedMediaType`: Represents a rejection when the media type of the request is not supported.
-/// - `InvalidContentFormat(E)`: Represents a rejection when the content format of the request is invalid,
-///   and includes an associated error of type `E`.
+/// * `UnsupportedMediaType(&'static str)`: This variant represents an `HTTP 415 Unsupported Media Type` error.
+///   It occurs when the server cannot handle the media type specified in the request. The associated string
+///   represents the expected media type.
+///
+/// * `BytesRejection(#[from] BytesRejection)`: This variant encapsulates errors when trying to read the body of
+///   the request. It wraps the `BytesRejection` error type, effectively providing a conversion from `BytesRejection`
+///   errors to a `Rejection` error.
+///
+/// * `InvalidContentFormat(E)`: This variant represents an `HTTP 422 Unprocessable Entity` error. It is used when
+///   the server cannot process the content format of the request. The associated generic type `E` allows flexibility
+///   in what exact error information this variant carries.
+///
+/// Each variant includes a detailed error message suitable for converting into an HTTP response.
 ///
 #[derive(Debug, thiserror::Error)]
 pub enum Rejection<E> {

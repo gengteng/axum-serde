@@ -1,6 +1,6 @@
 [package]
 name = "axum-serde"
-version = "0.1.0"
+version = "0.1.0-alpha"
 description = "Empower your Axum applications with multiple serde-based extractors and responders"
 authors = ["GengTeng <me@gteng.org>"]
 license = "MIT"
