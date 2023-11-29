@@ -8,11 +8,11 @@
 
 ## 🗂️ Extractors
 
-| Extractor    | Feature | Backend                                           | Tests |
-|--------------|---------|---------------------------------------------------|-------|
-| `Yaml<T>`    | yaml    | [serde_yaml](https://crates.io/crates/serde_yaml) | ❌     | 
-| `MsgPack<T>` | msgpack | [rmp-serde](https://crates.io/crates/rmp-serde)   | ❌     | 
-| `Toml<T>`    | toml    | [toml](https://crates.io/crates/toml)             | ❌     | 
+| Extractor                      | Feature | Backend                                           | Tests |
+|--------------------------------|---------|---------------------------------------------------|-------|
+| `Yaml<T>`                      | yaml    | [serde_yaml](https://crates.io/crates/serde_yaml) | ❌     | 
+| `MsgPack<T>` / `MsgPackRaw<T>` | msgpack | [rmp-serde](https://crates.io/crates/rmp-serde)   | ❌     | 
+| `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml)             | ❌     | 
 
 ## 📜 License
 
