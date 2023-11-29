@@ -1,0 +1,28 @@
+[package]
+name = "axum-serde"
+version = "0.1.0"
+description = "Empower your Axum applications with multiple serde-based extractors and responders"
+authors = ["GengTeng <me@gteng.org>"]
+edition = "2021"
+license = "MIT"
+
+[package.metadata.docs.rs]
+features = ["full"]
+
+[dependencies]
+axum = "0.7.1"
+serde = "1.0.193"
+mime = "0.3.17"
+serde_yaml = { version = "0.9.27", optional = true }
+rmp-serde = { version = "1.1.2", optional = true }
+toml_ = { package = "toml", version = "0.8.8", optional = true }
+axum-core = "0.4.0"
+async-trait = "0.1.74"
+thiserror = "1.0.50"
+bytes = "1.5.0"
+
+[features]
+yaml = ["dep:serde_yaml"]
+msgpack = ["dep:rmp-serde"]
+toml = ["dep:toml_"]
+full = ["yaml", "msgpack", "toml"]
