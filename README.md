@@ -4,6 +4,8 @@
 [![crates.io download](https://img.shields.io/crates/d/axum-serde)](https://crates.io/crates/axum-serde)
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue)](https://github.com/gengteng/axum-serde/blob/main/LICENSE)
 [![dependency status](https://deps.rs/repo/github/gengteng/axum-serde/status.svg)](https://deps.rs/repo/github/gengteng/axum-serde)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/gengteng/axum-serde/.github/workflows/main.yml?branch=main)](https://github.com/gengteng/axum-serde/actions/workflows/ci.yml)
+[![Coverage Status](https://coveralls.io/repos/github/gengteng/axum-serde/badge.svg?branch=main)](https://coveralls.io/github/gengteng/axum-serde?branch=main)
 
 ## 📑 Overview
 
