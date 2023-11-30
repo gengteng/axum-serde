@@ -159,13 +159,15 @@ macro_rules! extractor {
         }
 
         impl<T> $ext<T> {
-            #[doc = "Consumes the extractor and returns the inner data."]
+            #[doc = "Consumes the `"]
+            #[doc = stringify!($ext)]
+            #[doc = "` extractor and returns the inner data."]
             pub fn into_inner(self) -> T {
                 self.0
             }
 
             #[doc = "Content type of "]
-            #[doc = stringify!($ext)]
+            #[doc = stringify!($name)]
             #[doc = " format."]
             pub const CONTENT_TYPE: &'static str = concat!(stringify!($type_), "/", stringify!($subtype));
         }
