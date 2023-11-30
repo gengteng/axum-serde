@@ -1,5 +1,6 @@
 #![doc = include_str!("../README.md")]
 #![deny(unsafe_code, missing_docs, clippy::unwrap_used)]
+#![allow(clippy::items_after_test_module)]
 
 #[cfg(feature = "msgpack")]
 pub mod msgpack;
@@ -23,6 +24,38 @@ pub use toml::Toml;
 pub use xml::Xml;
 #[cfg(feature = "yaml")]
 pub use yaml::Yaml;
+
+/// Checks if the content type in the given headers matches the expected content type.
+///
+/// # Arguments
+///
+/// * `headers` - A reference to the `HeaderMap` containing the headers.
+/// * `expected_content_type` - A reference to the `mime::Mime` representing the expected content type.
+///
+/// # Returns
+///
+/// Returns `true` if the content type in the headers matches the expected content type, otherwise `false`.
+pub fn check_content_type(headers: &HeaderMap, expected_content_type: &str) -> bool {
+    let content_type = if let Some(content_type) = headers.get(header::CONTENT_TYPE) {
+        content_type
+    } else {
+        return false;
+    };
+
+    let content_type = if let Ok(content_type) = content_type.to_str() {
+        content_type
+    } else {
+        return false;
+    };
+
+    let mime = if let Ok(mime) = content_type.parse::<mime::Mime>() {
+        mime
+    } else {
+        return false;
+    };
+
+    <Mime as PartialEq<&str>>::eq(&mime, &expected_content_type)
+}
 
 /// This macro is designed to create an extractor type.
 /// It uses `serde` for extracting data from requests and serializing data into response body.
@@ -263,7 +296,13 @@ macro_rules! extractor {
                 assert_eq!(response.status_code(), axum_test::http::StatusCode::OK);
 
                 let response = server.post(TEST_ROUTE)
+                    .bytes(bytes.clone())
+                    .await;
+                assert_eq!(response.status_code(), axum_test::http::StatusCode::UNSUPPORTED_MEDIA_TYPE);
+
+                let response = server.post(TEST_ROUTE)
                     .bytes(bytes)
+                    .add_header(axum::http::header::CONTENT_TYPE, HeaderValue::from_static("invalid/type"))
                     .await;
                 assert_eq!(response.status_code(), axum_test::http::StatusCode::UNSUPPORTED_MEDIA_TYPE);
 
@@ -296,36 +335,4 @@ macro_rules! extractor {
             }
         }
     };
-}
-
-/// Checks if the content type in the given headers matches the expected content type.
-///
-/// # Arguments
-///
-/// * `headers` - A reference to the `HeaderMap` containing the headers.
-/// * `expected_content_type` - A reference to the `mime::Mime` representing the expected content type.
-///
-/// # Returns
-///
-/// Returns `true` if the content type in the headers matches the expected content type, otherwise `false`.
-pub fn check_content_type(headers: &HeaderMap, expected_content_type: &str) -> bool {
-    let content_type = if let Some(content_type) = headers.get(header::CONTENT_TYPE) {
-        content_type
-    } else {
-        return false;
-    };
-
-    let content_type = if let Ok(content_type) = content_type.to_str() {
-        content_type
-    } else {
-        return false;
-    };
-
-    let mime = if let Ok(mime) = content_type.parse::<mime::Mime>() {
-        mime
-    } else {
-        return false;
-    };
-
-    <Mime as PartialEq<&str>>::eq(&mime, &expected_content_type)
 }
