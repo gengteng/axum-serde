@@ -58,7 +58,7 @@ impl<E: Display> IntoResponse for Rejection<E> {
                 .into_response(),
             Rejection::BytesRejection(br) => br.into_response(),
             Rejection::InvalidContentFormat(e) => {
-                (StatusCode::UNPROCESSABLE_ENTITY, e.to_string()).into_response()
+                (StatusCode::UNPROCESSABLE_ENTITY, format!("Invalid content format: {}", e)).into_response()
             }
         }
     }

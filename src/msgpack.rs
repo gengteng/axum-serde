@@ -11,7 +11,8 @@ extractor!(
     msgpack,
     from_slice,
     Error,
-    to_vec_named
+    to_vec_named,
+    msgpack
 );
 
 extractor!(
@@ -21,5 +22,6 @@ extractor!(
     msgpack,
     from_slice,
     Error,
-    to_vec
+    to_vec,
+    msgpack_raw
 );

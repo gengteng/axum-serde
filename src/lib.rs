@@ -36,6 +36,7 @@ pub use yaml::Yaml;
 /// * `$de` - A function identifier for deserializing data from the HTTP request body.
 /// * `$de_err` - The type of error that can occur when deserializing from the request body.
 /// * `$ser` - A function identifier for serializing the HTTP response body to bytes.
+/// * `$test` - The test module name.
 ///
 #[macro_export]
 macro_rules! extractor {
@@ -46,7 +47,8 @@ macro_rules! extractor {
         $subtype:tt,
         $de:ident,
         $de_err:ident,
-        $ser:ident
+        $ser:ident,
+        $test:ident
     ) => {
         #[doc = stringify!($name)]
         #[doc = " Extractor / Response."]
@@ -218,6 +220,79 @@ macro_rules! extractor {
                     )
                         .into_response(),
                 }
+            }
+        }
+
+        #[cfg(test)]
+        mod $test {
+            use super::*;
+            use serde::{Deserialize, Serialize};
+
+            #[derive(Deserialize, Serialize, Default)]
+            struct Value {
+                v0: String,
+                v1: i32,
+            }
+
+            const TEST_ROUTE: &'static str = "/value";
+            const EXT_CONTENT_TYPE: &'static str = concat!(stringify!($type_), "/", stringify!($subtype));
+
+            #[tokio::test]
+            async fn extractor() {
+                use axum::Router;
+                use axum::routing::post;
+                use axum_test::TestServer;
+                use axum_test::http::HeaderValue;
+
+                async fn handler($ext(_user): $ext<Value>) {
+                }
+
+                let my_app = Router::new()
+                    .route(TEST_ROUTE, post(handler));
+
+                let server = TestServer::new(my_app).expect("Failed to create test server");
+
+                let value = Value::default();
+                let bytes = bytes::Bytes::from($ser(&value).expect("Failed to serialize value"));
+
+                let response = server.post(TEST_ROUTE)
+                    .bytes(bytes.clone())
+                    .add_header(axum::http::header::CONTENT_TYPE, HeaderValue::from_static(EXT_CONTENT_TYPE))
+                    .await;
+
+                assert_eq!(response.status_code(), axum_test::http::StatusCode::OK);
+
+                let response = server.post(TEST_ROUTE)
+                    .bytes(bytes)
+                    .await;
+                assert_eq!(response.status_code(), axum_test::http::StatusCode::UNSUPPORTED_MEDIA_TYPE);
+
+                let response = server.post(TEST_ROUTE)
+                    .bytes(bytes::Bytes::from_static(b"invalid data"))
+                    .add_header(axum::http::header::CONTENT_TYPE, HeaderValue::from_static(EXT_CONTENT_TYPE))
+                    .await;
+                assert_eq!(response.status_code(), axum_test::http::StatusCode::UNPROCESSABLE_ENTITY);
+            }
+
+            #[tokio::test]
+            async fn response() {
+                use axum::Router;
+                use axum::routing::get;
+                use axum_test::TestServer;
+
+                async fn handler() -> $ext<Value> {
+                    $ext(Value::default())
+                }
+
+                let my_app = Router::new()
+                    .route(TEST_ROUTE, get(handler));
+
+                let server = TestServer::new(my_app).expect("Failed to create test server");
+
+                let response = server.get(TEST_ROUTE).await;
+                assert!($crate::check_content_type(response.headers(), EXT_CONTENT_TYPE));
+                let body = response.as_bytes();
+                let _value: Value = $de(&body).expect("Failed to deserialize");
             }
         }
     };

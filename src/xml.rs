@@ -7,7 +7,7 @@ use quick_xml::DeError;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-extractor!(XML, Xml, application, xml, from_slice, DeError, to_vec);
+extractor!(XML, Xml, application, xml, from_slice, DeError, to_vec, xml);
 
 fn from_slice<T: DeserializeOwned>(s: &[u8]) -> Result<T, DeError> {
     from_reader(s)
