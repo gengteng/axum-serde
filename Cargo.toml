@@ -1,7 +1,7 @@
 [package]
 name = "axum-serde"
 version = "0.1.2"
-description = "Empower your Axum applications with multiple serde-based extractors and responders"
+description = "Provides multiple serde-based extractors and responders for the Axum web framework"
 authors = ["GengTeng <me@gteng.org>"]
 license = "MIT"
 homepage = "https://github.com/gengteng/axum-serde"
