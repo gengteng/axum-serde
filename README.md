@@ -101,6 +101,18 @@ fn to_vec<T: Serialize>(_value: &T) -> Result<Vec<u8>, String> {
 }
 ```
 
+* Test
+
+```shell
+# Add dependencies for extractor / response tests
+cargo add axum-test --dev
+cargo add serde --features derive --dev
+cargo add tokio --features macros --dev
+
+# Test the generated myfmt module
+cargo test myfmt
+```
+
 ## 📜 License
 
 This project is licensed under the MIT License.
