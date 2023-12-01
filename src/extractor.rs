@@ -113,6 +113,7 @@ macro_rules! extractor {
         #[doc = " # let _: Router = app;"]
         #[doc = " ```"]
         #[derive(Debug, Clone, Copy, Default)]
+        #[must_use]
         pub struct $ext<T>(pub T);
 
         impl<T> From<T> for $ext<T> {
@@ -149,6 +150,14 @@ macro_rules! extractor {
             #[doc = stringify!($name)]
             #[doc = " format."]
             pub const CONTENT_TYPE: &'static str = concat!(stringify!($type_), "/", stringify!($subtype));
+
+            #[doc = concat!("Construct a `", stringify!($ext), "<T>` from a byte slice.")]
+            #[doc = concat!("Most users should prefer to use the FromRequest impl but special cases may require first extracting a Request into Bytes then optionally constructing a `", stringify!($ext), "<T>`.")]
+            pub fn from_bytes(bytes: &[u8]) -> Result<Self, $crate::Rejection<$de_err>>
+                where T: serde::de::DeserializeOwned
+            {
+                Ok($ext($de(&bytes).map_err($crate::Rejection::InvalidContentFormat)?))
+            }
         }
 
         #[async_trait::async_trait]
@@ -165,8 +174,7 @@ macro_rules! extractor {
             ) -> Result<Self, Self::Rejection> {
                 if $crate::check_content_type(req.headers(), Self::CONTENT_TYPE) {
                     let src = bytes::Bytes::from_request(req, state).await?;
-                    let inner = $de(&src).map_err($crate::Rejection::InvalidContentFormat)?;
-                    Ok($ext(inner))
+                    Self::from_bytes(&src)
                 } else {
                     Err($crate::Rejection::UnsupportedMediaType(Self::CONTENT_TYPE))
                 }

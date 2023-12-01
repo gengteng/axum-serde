@@ -23,26 +23,32 @@ cargo add axum-serde --features yaml
 * Example
 
 ```rust,ignore
-use axum::routing::post;
+use axum::routing::{get, post};
 use axum::Router;
 use axum_serde::Yaml;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 use tokio::net::TcpListener;
 
-#[derive(Debug, Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct Data {
     pub v0: usize,
     pub v1: usize,
 }
 
-pub async fn handler(Yaml(_data): Yaml<Data>) {
+pub async fn extractor(Yaml(_data): Yaml<Data>) {
     // use _data
+}
+
+pub async fn response() -> Yaml<Data> {
+    todo!()
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
-    let router = Router::new().route("/data", post(handler));
+    let router = Router::new()
+        .route("/data", post(extractor))
+        .route("/data", get(response));
     let listener = TcpListener::bind(&SocketAddr::from(([0u8, 0, 0, 0], 0u16))).await?;
     axum::serve(listener, router.into_make_service()).await?;
     Ok(())
