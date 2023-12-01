@@ -6,7 +6,7 @@
 ///
 /// # Arguments
 ///
-/// * `$name` - The name of the HTTP extractor/response.
+/// * `$name` - The name of the data format.
 /// * `$ext` - The actual type name of the HTTP extractor/response.
 /// * `$type_` - The main type of the Content-Type that this extractor supports.
 /// * `$subtype` - The subtype of the Content-Type that this extractor supports.

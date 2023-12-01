@@ -58,6 +58,43 @@ async fn main() -> anyhow::Result<()> {
 | `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml) v0.8.8              |
 | `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.31.0   |
 
+## 🎁 Custom Extractor
+
+Use the `extractor` macro to create custom extractors with minimal boilerplate:
+
+* Install
+
+```shell
+cargo add axum bytes mime serde axum-serde async-trait
+```
+
+* Example
+
+```rust,ignore
+use axum_serde::extractor;
+use serde::de::DeserializeOwned;
+use serde::Serialize;
+
+extractor!(
+    MyFormat,    // The name of the data format.
+    MyFmt,       // The actual type name of the HTTP extractor/response.
+    application, // The main type of the Content-Type that this extractor supports.
+    myfmt,       // The subtype of the Content-Type that this extractor supports.
+    from_slice,  // A function identifier for deserializing data from the HTTP request body.
+    String,      // The type of error that can occur when deserializing from the request body.
+    to_vec,      // A function identifier for serializing the HTTP response body to bytes.
+    myfmt        // The test module name.
+);
+
+fn from_slice<T: DeserializeOwned>(_bytes: &[u8]) -> Result<T, String> {
+    todo!()
+}
+
+fn to_vec<T: Serialize>(_value: &T) -> Result<Vec<u8>, String> {
+    todo!()
+}
+```
+
 ## 📜 License
 
 This project is licensed under the MIT License.
