@@ -1,7 +1,7 @@
 #![doc = include_str!("../README.md")]
 #![deny(unsafe_code, missing_docs, clippy::unwrap_used)]
 
-mod extractor;
+pub mod macros;
 #[cfg(feature = "msgpack")]
 pub mod msgpack;
 pub mod rejection;

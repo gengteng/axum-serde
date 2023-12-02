@@ -9,7 +9,9 @@
 
 ## 📑 Overview
 
-**axum-serde** is a library that provides multiple serde-based extractors and responders for the Axum web framework.
+**axum-serde** is a library that provides multiple serde-based extractors / responses for the Axum web framework. It also offers a macro to easily customize extractors and responses without writing much boilerplate code.
+
+If you were using crates like **axum-yaml**, **axum-msgpack** etc. in axum 0.6 and wish to upgrade to axum 0.7, **axum-serde** can be used as a replacement to simplify the migration, without having to modify existing code too much.
 
 ## 🚀 Basic usage
 
@@ -55,7 +57,7 @@ async fn main() -> anyhow::Result<()> {
 }
 ```
 
-## 🗂️ Extractors
+## 🗂️ Extractors / responses
 
 | Extractor                      | Feature | Backend                                                   |
 |--------------------------------|---------|-----------------------------------------------------------|
@@ -64,22 +66,17 @@ async fn main() -> anyhow::Result<()> {
 | `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml) v0.8.8              |
 | `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.31.0   |
 
-## 🎁 Custom Extractor
+## 🎁 Custom extractor / response
 
 Use the `extractor` macro to create custom extractors with minimal boilerplate:
-
-* Install
-
-```shell
-cargo add axum bytes mime serde axum-serde async-trait
-```
 
 * Example
 
 ```rust,ignore
-use axum_serde::extractor;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
+use axum_serde::{
+    extractor,
+    macros::{DeserializeOwned, Serialize},
+};
 
 extractor!(
     MyFormat,    // The name of the data format.
@@ -103,13 +100,15 @@ fn to_vec<T: Serialize>(_value: &T) -> Result<Vec<u8>, String> {
 
 * Test
 
+More `dev-dependencies` are required to run the tests:
+
 ```shell
-# Add dependencies for extractor / response tests
+# Add dev-dependencies for tests
 cargo add axum-test --dev
 cargo add serde --features derive --dev
 cargo add tokio --features macros --dev
 
-# Test the generated myfmt module
+# Run the generated tests
 cargo test myfmt
 ```
 

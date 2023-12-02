@@ -1,6 +1,17 @@
 //! Extractor macro
 //!
 
+pub use async_trait::async_trait;
+pub use axum::{
+    extract::{FromRequest, Request},
+    http,
+    response::{IntoResponse, Response},
+    routing, Router,
+};
+pub use bytes::Bytes;
+pub use mime;
+pub use serde::{de::DeserializeOwned, Deserialize, Serialize};
+
 /// This macro is designed to create an extractor type.
 /// It uses `serde` for extracting data from requests and serializing data into response body.
 ///
@@ -154,26 +165,26 @@ macro_rules! extractor {
             #[doc = concat!("Construct a `", stringify!($ext), "<T>` from a byte slice.")]
             #[doc = concat!("Most users should prefer to use the FromRequest impl but special cases may require first extracting a Request into Bytes then optionally constructing a `", stringify!($ext), "<T>`.")]
             pub fn from_bytes(bytes: &[u8]) -> Result<Self, $crate::Rejection<$de_err>>
-                where T: serde::de::DeserializeOwned
+                where T: $crate::macros::DeserializeOwned
             {
                 Ok($ext($de(&bytes).map_err($crate::Rejection::InvalidContentFormat)?))
             }
         }
 
-        #[async_trait::async_trait]
-        impl<T, S> axum::extract::FromRequest<S> for $ext<T>
+        #[$crate::macros::async_trait]
+        impl<T, S> $crate::macros::FromRequest<S> for $ext<T>
         where
-            T: serde::de::DeserializeOwned,
+            T: $crate::macros::DeserializeOwned,
             S: Send + Sync,
         {
             type Rejection = $crate::Rejection<$de_err>;
 
             async fn from_request(
-                req: axum::extract::Request,
+                req: $crate::macros::Request,
                 state: &S,
             ) -> Result<Self, Self::Rejection> {
                 if $crate::check_content_type(req.headers(), Self::CONTENT_TYPE) {
-                    let src = bytes::Bytes::from_request(req, state).await?;
+                    let src = $crate::macros::Bytes::from_request(req, state).await?;
                     Self::from_bytes(&src)
                 } else {
                     Err($crate::Rejection::UnsupportedMediaType(Self::CONTENT_TYPE))
@@ -181,25 +192,25 @@ macro_rules! extractor {
             }
         }
 
-        impl<T> axum::response::IntoResponse for $ext<T>
+        impl<T> $crate::macros::IntoResponse for $ext<T>
         where
-            T: serde::Serialize,
+            T: $crate::macros::Serialize,
         {
-            fn into_response(self) -> axum::response::Response {
+            fn into_response(self) -> $crate::macros::Response {
                 match $ser(&self.0) {
                     Ok(vec) => (
                         [(
-                            axum::http::header::CONTENT_TYPE,
-                            axum::http::HeaderValue::from_static(Self::CONTENT_TYPE),
+                            $crate::macros::http::header::CONTENT_TYPE,
+                            $crate::macros::http::HeaderValue::from_static(Self::CONTENT_TYPE),
                         )],
                         vec,
                     )
                         .into_response(),
                     Err(err) => (
-                        axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                        $crate::macros::http::StatusCode::INTERNAL_SERVER_ERROR,
                         [(
-                            axum::http::header::CONTENT_TYPE,
-                            axum::http::HeaderValue::from_static(mime::TEXT_PLAIN_UTF_8.as_ref()),
+                            $crate::macros::http::header::CONTENT_TYPE,
+                            $crate::macros::http::HeaderValue::from_static($crate::macros::mime::TEXT_PLAIN_UTF_8.as_ref()),
                         )],
                         err.to_string(),
                     )
@@ -211,7 +222,16 @@ macro_rules! extractor {
         #[cfg(test)]
         mod $test {
             use super::*;
-            use serde::{Deserialize, Serialize};
+            use $crate::macros::{
+                Bytes,
+                Router,
+                routing::{get, post},
+                {Deserialize, Serialize},
+                http::{
+                    StatusCode,
+                    header::{HeaderValue, CONTENT_TYPE}
+                }
+            };
 
             #[derive(Deserialize, Serialize, Default)]
             struct Value {
@@ -224,10 +244,7 @@ macro_rules! extractor {
 
             #[tokio::test]
             async fn extractor() {
-                use axum::Router;
-                use axum::routing::post;
                 use axum_test::TestServer;
-                use axum_test::http::HeaderValue;
 
                 async fn handler($ext(_user): $ext<Value>) {
                 }
@@ -238,37 +255,35 @@ macro_rules! extractor {
                 let server = TestServer::new(my_app).expect("Failed to create test server");
 
                 let value = Value::default();
-                let bytes = bytes::Bytes::from($ser(&value).expect("Failed to serialize value"));
+                let bytes = Bytes::from($ser(&value).expect("Failed to serialize value"));
 
                 let response = server.post(TEST_ROUTE)
                     .bytes(bytes.clone())
-                    .add_header(axum::http::header::CONTENT_TYPE, HeaderValue::from_static(EXT_CONTENT_TYPE))
+                    .add_header(CONTENT_TYPE, HeaderValue::from_static(EXT_CONTENT_TYPE))
                     .await;
 
-                assert_eq!(response.status_code(), axum_test::http::StatusCode::OK);
+                assert_eq!(response.status_code(), StatusCode::OK);
 
                 let response = server.post(TEST_ROUTE)
                     .bytes(bytes.clone())
                     .await;
-                assert_eq!(response.status_code(), axum_test::http::StatusCode::UNSUPPORTED_MEDIA_TYPE);
+                assert_eq!(response.status_code(), StatusCode::UNSUPPORTED_MEDIA_TYPE);
 
                 let response = server.post(TEST_ROUTE)
                     .bytes(bytes)
-                    .add_header(axum::http::header::CONTENT_TYPE, HeaderValue::from_static("invalid/type"))
+                    .add_header(CONTENT_TYPE, HeaderValue::from_static("invalid/type"))
                     .await;
-                assert_eq!(response.status_code(), axum_test::http::StatusCode::UNSUPPORTED_MEDIA_TYPE);
+                assert_eq!(response.status_code(), StatusCode::UNSUPPORTED_MEDIA_TYPE);
 
                 let response = server.post(TEST_ROUTE)
-                    .bytes(bytes::Bytes::from_static(b"invalid data"))
-                    .add_header(axum::http::header::CONTENT_TYPE, HeaderValue::from_static(EXT_CONTENT_TYPE))
+                    .bytes($crate::macros::Bytes::from_static(b"invalid data"))
+                    .add_header(CONTENT_TYPE, HeaderValue::from_static(EXT_CONTENT_TYPE))
                     .await;
-                assert_eq!(response.status_code(), axum_test::http::StatusCode::UNPROCESSABLE_ENTITY);
+                assert_eq!(response.status_code(), StatusCode::UNPROCESSABLE_ENTITY);
             }
 
             #[tokio::test]
             async fn response() {
-                use axum::Router;
-                use axum::routing::get;
                 use axum_test::TestServer;
 
                 async fn handler() -> $ext<Value> {
