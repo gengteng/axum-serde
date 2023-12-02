@@ -13,8 +13,6 @@
 
 If you were using crates like **axum-yaml**, **axum-msgpack** etc. in axum 0.6 and wish to upgrade to axum 0.7, **axum-serde** can be used as a replacement to simplify the migration, without having to modify existing code too much.
 
-If you were using crates like **axum-yaml**, **axum-msgpack** etc. in axum 0.6 and wish to upgrade to axum 0.7, **axum-serde** can be used as a replacement to simplify the migration, without having to modify existing code too much.
-
 ## 🚀 Basic usage
 
 * Install
