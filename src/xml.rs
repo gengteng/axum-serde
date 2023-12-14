@@ -20,8 +20,7 @@ fn to_vec<T: Serialize>(value: &T) -> Result<Vec<u8>, DeError> {
 extractor!(
     XML,
     Xml,
-    application,
-    xml,
+    "application/xml",
     from_slice,
     DeError,
     to_vec,

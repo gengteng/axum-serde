@@ -7,8 +7,7 @@ use rmp_serde::{from_slice, to_vec, to_vec_named};
 extractor!(
     MessagePack,
     MsgPack,
-    application,
-    msgpack,
+    "application/msgpack",
     from_slice,
     Error,
     to_vec_named,
@@ -18,8 +17,7 @@ extractor!(
 extractor!(
     MessagePack,
     MsgPackRaw,
-    application,
-    msgpack,
+    "application/msgpack",
     from_slice,
     Error,
     to_vec,

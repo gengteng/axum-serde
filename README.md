@@ -72,21 +72,20 @@ Use the `extractor` macro to create custom extractors with minimal boilerplate:
 
 * Example
 
-```rust,ignore
+```rust
 use axum_serde::{
     extractor,
     macros::{DeserializeOwned, Serialize},
 };
 
 extractor!(
-    MyFormat,    // The name of the data format.
-    MyFmt,       // The actual type name of the HTTP extractor/response.
-    application, // The main type of the Content-Type that this extractor supports.
-    myfmt,       // The subtype of the Content-Type that this extractor supports.
-    from_slice,  // A function identifier for deserializing data from the HTTP request body.
-    String,      // The type of error that can occur when deserializing from the request body.
-    to_vec,      // A function identifier for serializing the HTTP response body to bytes.
-    myfmt        // The test module name.
+    MyFormat,                   // The name of the data format.
+    MyFmt,                      // The actual type name of the HTTP extractor/response.
+    "application/myfmt",        // The Content-Type that this extractor supports.
+    from_slice,                 // A function identifier for deserializing data from the HTTP request body.
+    String,                     // The type of error that can occur when deserializing from the request body.
+    to_vec,                     // A function identifier for serializing the HTTP response body to bytes.
+    myfmt                       // The test module name.
 );
 
 fn from_slice<T: DeserializeOwned>(_bytes: &[u8]) -> Result<T, String> {

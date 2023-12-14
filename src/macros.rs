@@ -19,8 +19,7 @@ pub use serde::{de::DeserializeOwned, Deserialize, Serialize};
 ///
 /// * `$name` - The name of the data format.
 /// * `$ext` - The actual type name of the HTTP extractor/response.
-/// * `$type_` - The main type of the Content-Type that this extractor supports.
-/// * `$subtype` - The subtype of the Content-Type that this extractor supports.
+/// * `$content_type` - The Content-Type that this extractor supports.
 /// * `$de` - A function identifier for deserializing data from the HTTP request body.
 /// * `$de_err` - The type of error that can occur when deserializing from the request body.
 /// * `$ser` - A function identifier for serializing the HTTP response body to bytes.
@@ -31,8 +30,7 @@ macro_rules! extractor {
     (
         $name:tt,
         $ext:tt,
-        $type_:tt,
-        $subtype:tt,
+        $content_type: tt,
         $de:ident,
         $de_err:ident,
         $ser:ident,
@@ -45,7 +43,7 @@ macro_rules! extractor {
         #[doc = "implements [`serde::Deserialize`]. The request will be rejected (and a [`crate::Rejection`] will"]
         #[doc = "be returned) if:"]
         #[doc = "- The request doesn't have a `Content-Type:"]
-        #[doc = concat!(stringify!($type_), "/", stringify!($subtype))]
+        #[doc = $content_type]
         #[doc = "` (or similar) header."]
         #[doc = "- The body doesn't contain syntactically valid "]
         #[doc = stringify!($name)]
@@ -89,7 +87,7 @@ macro_rules! extractor {
         #[doc = " `"]
         #[doc = stringify!($ext)]
         #[doc = "`, and will automatically set `Content-Type:"]
-        #[doc = concat!(stringify!($type_), "/", stringify!($subtype))]
+        #[doc = $content_type]
         #[doc = "` header."]
         #[doc = ""]
         #[doc = " # Response example"]
@@ -160,7 +158,7 @@ macro_rules! extractor {
             #[doc = "Content type of "]
             #[doc = stringify!($name)]
             #[doc = " format."]
-            pub const CONTENT_TYPE: &'static str = concat!(stringify!($type_), "/", stringify!($subtype));
+            pub const CONTENT_TYPE: &'static str = $content_type;
 
             #[doc = concat!("Construct a `", stringify!($ext), "<T>` from a byte slice.")]
             #[doc = concat!("Most users should prefer to use the FromRequest impl but special cases may require first extracting a Request into Bytes then optionally constructing a `", stringify!($ext), "<T>`.")]
@@ -240,7 +238,7 @@ macro_rules! extractor {
             }
 
             const TEST_ROUTE: &'static str = "/value";
-            const EXT_CONTENT_TYPE: &'static str = concat!(stringify!($type_), "/", stringify!($subtype));
+            const EXT_CONTENT_TYPE: &'static str = $content_type;
 
             #[tokio::test]
             async fn extractor() {

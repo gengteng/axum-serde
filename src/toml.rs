@@ -20,8 +20,7 @@ fn to_vec<T: Serialize>(value: &T) -> Result<Vec<u8>, toml_::ser::Error> {
 extractor!(
     TOML,
     Toml,
-    application,
-    toml,
+    "application/toml",
     from_slice,
     Error,
     to_vec,

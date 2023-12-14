@@ -15,8 +15,7 @@ fn to_vec<T: Serialize>(value: &T) -> Result<Vec<u8>, Error> {
 extractor!(
     YAML,
     Yaml,
-    application,
-    yaml,
+    "application/yaml",
     from_slice,
     Error,
     to_vec,
