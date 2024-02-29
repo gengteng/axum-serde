@@ -32,7 +32,6 @@ use axum::Router;
 use axum_serde::{Sonic, Yaml};
 use serde::{Deserialize, Serialize};
 use std::net::{Ipv4Addr, SocketAddr};
-use axum::response::IntoResponse;
 use tokio::net::TcpListener;
 
 #[derive(Deserialize, Serialize)]
