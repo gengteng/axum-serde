@@ -1,11 +1,12 @@
 //! # JSON (Sonic)
 //!
+use crate::extractor;
 use serde::de::{DeserializeOwned, Error as _};
 use serde::Serialize;
 use sonic_rs::Error;
-use crate::extractor;
 
-extractor!(JSON,
+extractor!(
+    JSON,
     Sonic,
     "application/json",
     from_slice,

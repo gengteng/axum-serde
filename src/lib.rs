@@ -5,14 +5,14 @@ pub mod macros;
 #[cfg(feature = "msgpack")]
 pub mod msgpack;
 pub mod rejection;
+#[cfg(feature = "sonic")]
+pub mod sonic;
 #[cfg(feature = "toml")]
 pub mod toml;
 #[cfg(feature = "xml")]
 pub mod xml;
 #[cfg(feature = "yaml")]
 pub mod yaml;
-#[cfg(feature = "sonic")]
-pub mod sonic;
 
 use axum::http::{header, HeaderMap};
 use mime::Mime;
@@ -20,14 +20,14 @@ use mime::Mime;
 #[cfg(feature = "msgpack")]
 pub use msgpack::{MsgPack, MsgPackRaw};
 pub use rejection::Rejection;
+#[cfg(feature = "sonic")]
+pub use sonic::Sonic;
 #[cfg(feature = "toml")]
 pub use toml::Toml;
 #[cfg(feature = "xml")]
 pub use xml::Xml;
 #[cfg(feature = "yaml")]
 pub use yaml::Yaml;
-#[cfg(feature = "sonic")]
-pub use sonic::Sonic;
 
 /// Checks if the content type in the given headers matches the expected content type.
 ///
