@@ -41,7 +41,7 @@ pub struct Data {
     pub b: String,
 }
 
-pub async fn yaml_to_json(Yaml(data): Yaml<Data>) -> Sonic(data) {
+pub async fn yaml_to_json(Yaml(data): Yaml<Data>) -> Sonic<Data> {
     Sonic(data)
 }
 
