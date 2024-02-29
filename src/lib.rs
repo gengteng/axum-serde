@@ -11,6 +11,8 @@ pub mod toml;
 pub mod xml;
 #[cfg(feature = "yaml")]
 pub mod yaml;
+#[cfg(feature = "sonic")]
+pub mod sonic;
 
 use axum::http::{header, HeaderMap};
 use mime::Mime;
@@ -24,6 +26,8 @@ pub use toml::Toml;
 pub use xml::Xml;
 #[cfg(feature = "yaml")]
 pub use yaml::Yaml;
+#[cfg(feature = "sonic")]
+pub use sonic::Sonic;
 
 /// Checks if the content type in the given headers matches the expected content type.
 ///

@@ -85,7 +85,7 @@ macro_rules! extractor {
         #[doc = " ```"]
         #[doc = " When used as a response, it can serialize any type that implements [`serde::Serialize`] to"]
         #[doc = " `"]
-        #[doc = stringify!($ext)]
+        #[doc = stringify!($name)]
         #[doc = "`, and will automatically set `Content-Type:"]
         #[doc = $content_type]
         #[doc = "` header."]

@@ -9,52 +9,62 @@
 
 ## 📑 Overview
 
-**axum-serde** is a library that provides multiple serde-based extractors / responses for the Axum web framework. It also offers a macro to easily customize extractors and responses without writing much boilerplate code.
+**axum-serde** is a library that provides multiple serde-based extractors / responses for the Axum web framework. It
+also offers a macro to easily customize extractors and responses without writing much boilerplate code.
 
-If you were using crates like **axum-yaml**, **axum-msgpack** etc. in axum 0.6 and wish to upgrade to axum 0.7, **axum-serde** can be used as a replacement to simplify the migration, without having to modify existing code too much.
+If you were using crates like **axum-yaml**, **axum-msgpack** etc. in axum 0.6 and wish to upgrade to axum 0.7, *
+*axum-serde** can be used as a replacement to simplify the migration, without having to modify existing code too much.
 
 ## 🚀 Basic usage
 
 * Install
 
 ```shell
-cargo add axum-serde --features yaml
+cargo add axum-serde --features yaml,sonic
 # Enable features as you need
 ```
 
 * Example
 
 ```rust,ignore
-use axum::routing::{get, post};
+use axum::routing::post;
 use axum::Router;
-use axum_serde::Yaml;
+use axum_serde::{Sonic, Yaml};
 use serde::{Deserialize, Serialize};
-use std::net::SocketAddr;
+use std::net::{Ipv4Addr, SocketAddr};
+use axum::response::IntoResponse;
 use tokio::net::TcpListener;
 
 #[derive(Deserialize, Serialize)]
 pub struct Data {
-    pub v0: usize,
-    pub v1: usize,
+    pub a: i32,
+    pub b: String,
 }
 
-pub async fn extractor(Yaml(_data): Yaml<Data>) {
-    // use _data
+pub async fn yaml_to_json(Yaml(data): Yaml<Data>) -> impl IntoResponse {
+    Sonic(data)
 }
 
-pub async fn response() -> Yaml<Data> {
-    todo!()
+pub async fn json_to_yaml(Sonic(data): Sonic<Data>) -> Yaml<Data> {
+    Yaml(data)
 }
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let router = Router::new()
-        .route("/data", post(extractor))
-        .route("/data", get(response));
-    let listener = TcpListener::bind(&SocketAddr::from(([0u8, 0, 0, 0], 0u16))).await?;
+        .route("/y2j", post(yaml_to_json))
+        .route("/j2y", post(json_to_yaml));
+    let listener = TcpListener::bind(&SocketAddr::from((Ipv4Addr::UNSPECIFIED, 8080))).await?;
     axum::serve(listener, router.into_make_service()).await?;
     Ok(())
 }
+```
+
+* Test
+
+```shell
+curl -X POST http://localhost:8080/y2j -H "Content-Type: application/yaml" -d $'a: 42\nb: Hello'
+curl -X POST http://localhost:8080/j2y -H "Content-Type: application/json" -d '{"a": 42, "b": "Hello, world!"}'
 ```
 
 ## 🗂️ Extractors / responses
@@ -65,6 +75,7 @@ async fn main() -> anyhow::Result<()> {
 | `MsgPack<T>` / `MsgPackRaw<T>` | msgpack | [rmp-serde](https://crates.io/crates/rmp-serde) v1.1.2    |
 | `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml) v0.8.8              |
 | `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.31.0   |
+| `Sonic<T>`                     | sonic   | [sonic-rs](https://crates.io/crates/sonic-rs) v0.3.3      |
 
 ## 🎁 Custom extractor / response
 
