@@ -75,6 +75,7 @@ curl -X POST http://localhost:8080/j2y -H "Content-Type: application/json" -d '{
 | `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml) v0.8.8              |
 | `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.31.0   |
 | `Sonic<T>`                     | sonic   | [sonic-rs](https://crates.io/crates/sonic-rs) v0.3.3      |
+| `Cbor<T>`                      | cbor    | [ciborium](https://crates.io/crates/ciborium) v0.2.2      |
 
 ## 🎁 Custom extractor / response
 

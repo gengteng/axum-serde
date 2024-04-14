@@ -1,6 +1,6 @@
 [package]
 name = "axum-serde"
-version = "0.3.0"
+version = "0.4.0"
 description = "Provides multiple serde-based extractors / responses for the Axum web framework, also offers a macro to easily customize extractors / responses."
 authors = ["GengTeng <me@gteng.org>"]
 license = "MIT"
@@ -24,23 +24,24 @@ edition = "2021"
 features = ["full"]
 
 [dependencies]
-axum = "0.7.1"
-serde = "1.0.193"
+axum = "0.7.5"
+serde = "1.0.197"
 mime = "0.3.17"
 serde_yaml = { version = "0.9.27", optional = true }
 rmp-serde = { version = "1.1.2", optional = true }
 toml_ = { package = "toml", version = "0.8.8", optional = true }
 quick-xml = { version = "0.31.0", optional = true, features = ["serialize"] }
 sonic-rs = { version = "0.3.3", optional = true }
-axum-core = "0.4.0"
-async-trait = "0.1.74"
-thiserror = "1.0.50"
-bytes = "1.5.0"
+ciborium = { version = "0.2.2", optional = true }
+axum-core = "0.4.3"
+async-trait = "0.1.79"
+thiserror = "1.0.58"
+bytes = "1.6.0"
 
 [dev-dependencies]
 axum-test = "14.0.0"
-serde = { version = "1.0.193", features = ["derive"] }
-tokio = { version = "1.34.0", features = ["macros"] }
+serde = { version = "1.0.197", features = ["derive"] }
+tokio = { version = "1.37.0", features = ["macros"] }
 
 [features]
 yaml = ["dep:serde_yaml"]
@@ -48,5 +49,7 @@ msgpack = ["dep:rmp-serde"]
 toml = ["dep:toml_"]
 xml = ["dep:quick-xml"]
 xml_encoding = ["xml", "quick-xml/encoding"]
-full = ["yaml", "msgpack", "toml", "xml", "sonic"]
 sonic = ["dep:sonic-rs"]
+cbor = ["dep:ciborium"]
+full = ["yaml", "msgpack", "toml", "xml", "sonic", "cbor"]
+

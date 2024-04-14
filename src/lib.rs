@@ -14,6 +14,9 @@ pub mod xml;
 #[cfg(feature = "yaml")]
 pub mod yaml;
 
+#[cfg(feature = "cbor")]
+pub mod cbor;
+
 use axum::http::{header, HeaderMap};
 use mime::Mime;
 
