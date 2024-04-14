@@ -31,6 +31,8 @@ pub use toml::Toml;
 pub use xml::Xml;
 #[cfg(feature = "yaml")]
 pub use yaml::Yaml;
+#[cfg(feature = "cbor")]
+pub use cbor::Cbor;
 
 /// Checks if the content type in the given headers matches the expected content type.
 ///
