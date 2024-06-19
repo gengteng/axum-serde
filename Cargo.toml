@@ -25,7 +25,6 @@ features = ["full"]
 
 [dependencies]
 http = "1.0.0"
-axum = "0.7.5"
 serde = "1.0.197"
 mime = "0.3.17"
 serde_yaml = { version = "0.9.27", optional = true }
@@ -40,6 +39,7 @@ thiserror = "1.0.58"
 bytes = "1.6.0"
 
 [dev-dependencies]
+axum = { version = "0.7.5", default-features = false }
 axum-test = "14.0.0"
 serde = { version = "1.0.197", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["macros"] }
