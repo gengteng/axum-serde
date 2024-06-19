@@ -1,9 +1,9 @@
 //! # Rejection
 //!
 
-use axum::http::StatusCode;
 use axum_core::extract::rejection::BytesRejection;
 use axum_core::response::{IntoResponse, Response};
+use http::StatusCode;
 use std::fmt::Display;
 
 /// `Rejection` is an enumeration which describes different types of rejection

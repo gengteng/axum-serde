@@ -17,7 +17,7 @@ pub mod yaml;
 #[cfg(feature = "cbor")]
 pub mod cbor;
 
-use axum::http::{header, HeaderMap};
+use http::{header, HeaderMap};
 use mime::Mime;
 
 #[cfg(feature = "msgpack")]

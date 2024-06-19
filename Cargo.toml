@@ -24,6 +24,7 @@ edition = "2021"
 features = ["full"]
 
 [dependencies]
+http = "1.0.0"
 axum = "0.7.5"
 serde = "1.0.197"
 mime = "0.3.17"
