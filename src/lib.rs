@@ -20,6 +20,8 @@ pub mod cbor;
 use http::{header, HeaderMap};
 use mime::Mime;
 
+#[cfg(feature = "cbor")]
+pub use cbor::Cbor;
 #[cfg(feature = "msgpack")]
 pub use msgpack::{MsgPack, MsgPackRaw};
 pub use rejection::Rejection;
@@ -31,8 +33,6 @@ pub use toml::Toml;
 pub use xml::Xml;
 #[cfg(feature = "yaml")]
 pub use yaml::Yaml;
-#[cfg(feature = "cbor")]
-pub use cbor::Cbor;
 
 /// Checks if the content type in the given headers matches the expected content type.
 ///
