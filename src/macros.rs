@@ -2,12 +2,11 @@
 //!
 
 pub use async_trait::async_trait;
-pub use axum::{
+pub use axum_core::{
     extract::{FromRequest, Request},
-    http,
-    response::{IntoResponse, Response},
-    routing, Router,
+    response::{IntoResponse, Response}
 };
+pub use http;
 pub use bytes::Bytes;
 pub use mime;
 pub use serde::{de::DeserializeOwned, Deserialize, Serialize};
@@ -220,10 +219,10 @@ macro_rules! extractor {
         #[cfg(test)]
         mod $test {
             use super::*;
+            use axum::Router;
+            use axum::routing::{get, post};
             use $crate::macros::{
                 Bytes,
-                Router,
-                routing::{get, post},
                 {Deserialize, Serialize},
                 http::{
                     StatusCode,
