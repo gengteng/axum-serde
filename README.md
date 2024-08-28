@@ -73,7 +73,7 @@ curl -X POST http://localhost:8080/j2y -H "Content-Type: application/json" -d '{
 | `Yaml<T>`                      | yaml    | [serde_yaml](https://crates.io/crates/serde_yaml) v0.9.33 |
 | `MsgPack<T>` / `MsgPackRaw<T>` | msgpack | [rmp-serde](https://crates.io/crates/rmp-serde) v1.3.0    |
 | `Toml<T>`                      | toml    | [toml](https://crates.io/crates/toml) v0.8.14             |
-| `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.33.0   |
+| `Xml<T>`                       | xml     | [quick-xml](https://crates.io/crates/quick-xml) v0.36.1   |
 | `Sonic<T>`                     | sonic   | [sonic-rs](https://crates.io/crates/sonic-rs) v0.3.7      |
 | `Cbor<T>`                      | cbor    | [ciborium](https://crates.io/crates/ciborium) v0.2.2      |
 
