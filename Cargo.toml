@@ -30,7 +30,7 @@ mime = "0.3.17"
 serde_yaml = { version = "0.9.33", optional = true }
 rmp-serde = { version = "1.3.0", optional = true }
 toml_ = { package = "toml", version = "0.8.14", optional = true }
-quick-xml = { version = "0.36.1", optional = true, features = ["serialize"] }
+quick-xml = { version = "0.37.0", optional = true, features = ["serialize"] }
 sonic-rs = { version = "0.3.7", optional = true }
 ciborium = { version = "0.2.2", optional = true }
 axum-core = "0.4.3"
@@ -40,7 +40,7 @@ bytes = "1.6.0"
 
 [dev-dependencies]
 axum = { version = "0.7.5", default-features = false }
-axum-test = "15.2.0"
+axum-test = "16.3.0"
 serde = { version = "1.0.197", features = ["derive"] }
 tokio = { version = "1.37.0", features = ["macros"] }
 
