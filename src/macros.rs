@@ -1,7 +1,6 @@
 //! Extractor macro
 //!
 
-pub use async_trait::async_trait;
 pub use axum_core::{
     extract::{FromRequest, Request},
     response::{IntoResponse, Response},
@@ -168,7 +167,6 @@ macro_rules! extractor {
             }
         }
 
-        #[$crate::macros::async_trait]
         impl<T, S> $crate::macros::FromRequest<S> for $ext<T>
         where
             T: $crate::macros::DeserializeOwned,
