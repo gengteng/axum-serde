@@ -12,8 +12,7 @@
 **axum-serde** is a library that provides multiple serde-based extractors / responses for the Axum web framework. It
 also offers a macro to easily customize extractors and responses without writing much boilerplate code.
 
-If you were using crates like **axum-yaml**, **axum-msgpack** etc. in axum 0.6 and wish to upgrade to axum 0.7,
-**axum-serde** can be used as a replacement to simplify the migration, without having to modify existing code too much.
+**axum-serde** 0.7 and earlier versions are based on axum 0.7. Versions 0.8 and later are based on axum 0.8.
 
 ## 🚀 Basic usage
 
