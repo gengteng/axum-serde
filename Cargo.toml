@@ -1,6 +1,6 @@
 [package]
 name = "axum-serde"
-version = "0.10.0"
+version = "0.9.0"
 description = "Provides multiple serde-based extractors / responses for the Axum web framework, also offers a macro to easily customize extractors / responses."
 authors = ["GengTeng <me@gteng.org>"]
 license = "MIT"
